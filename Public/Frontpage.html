@@ -185,7 +185,7 @@ async function checkBus(){
             localStorage.setItem("busId", busId);
 
             // redirect
-            window.location.href = "/routemap.html";
+            window.location.href = `/routemap.html?bus=${busId}`;
 
         } else {
             errorMsg.textContent = "❌ Bus not found!";
