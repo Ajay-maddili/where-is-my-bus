@@ -3,69 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>College Bus Tracker</title>
+<title>Where is My College Bus</title>
 
 <style>
-body {
+* {
     margin: 0;
-    font-family: system-ui;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Top Navigation Bar */
-.navbar {
-    background: #1f2937;
-    padding: 15px 30px;
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-}
-
-.logo {
     color: white;
-    font-weight: bold;
-    font-size: 1.3rem;
 }
 
-.menu a {
-    color: white;
-    text-decoration: none;
-    margin-left: 20px;
-    font-weight: 500;
-    transition: 0.3s;
-}
-
-.menu a:hover {
-    color: #10b981;
-}
-
-/* Content Area */
-.content {
-    padding: 60px;
+/* CONTAINER */
+.container {
     text-align: center;
+    max-width: 520px;
+    width: 100%;
 }
 
-.content h1 {
-    font-size: 2.5rem;
+/* TITLE */
+h1 {
+    font-size: 2.7rem;
+    margin-bottom: 10px;
+    text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.subtitle {
+    margin-bottom: 25px;
+    opacity: 0.9;
+}
+
+/* STATUS BAR */
+.status-bar {
+    margin-bottom: 20px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    background: rgba(0,255,0,0.2);
+    font-size: 0.9rem;
+}
+
+/* MENU */
+.menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+/* CARD */
+.card {
+    padding: 25px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+/* HOVER EFFECT */
+.card:hover {
+    transform: translateY(-8px) scale(1.03);
+    background: rgba(255,255,255,0.25);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+/* ICON */
+.icon {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+/* FOOTER */
+.footer {
+    margin-top: 25px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+    .menu {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="navbar">
-    <div class="logo">🚌 Bus Tracker</div>
-    <div class="menu">
-        <a href="/">Home</a>
-        <a href="/frontpage">Frontpage</a>
-        <a href="/routmap?bus=BUS001">Routemap</a>
-        <a href="/driver">Driver</a>
+<div class="container">
+
+    <h1>🚌 Where is My Bus?</h1>
+    <p class="subtitle">College Bus Live Tracking System</p>
+
+    <div class="status-bar" id="statusBar">
+        ✅ System Online
     </div>
+
+    <div class="menu">
+
+        <!-- HOME -->
+        <a href="/" class="card">
+            <div class="icon">🏠</div>
+            <h3>Home</h3>
+            <p>Search & Track Bus</p>
+        </a>
+
+        <!-- USER -->
+        <a href="/frontpage.html" class="card">
+            <div class="icon">👨‍🎓</div>
+            <h3>User</h3>
+            <p>Track Bus Location</p>
+        </a>
+
+        <!-- DRIVER -->
+        <a href="/driver.html" class="card">
+            <div class="icon">🧑‍✈️</div>
+            <h3>Driver</h3>
+            <p>Send GPS Location</p>
+        </a>
+
+        <!-- ROUTE MAP -->
+        <a href="/routemap.html" class="card">
+            <div class="icon">🗺️</div>
+            <h3>Route Map</h3>
+            <p>View Live Map</p>
+        </a>
+
+    </div>
+
+    <div class="footer">
+        🚀 Developed for College Bus Tracking Project
+    </div>
+
 </div>
 
-<div class="content">
-    <h1>Welcome to College Bus Tracking System</h1>
-    <p>Select an option from the menu above.</p>
-</div>
+<script>
+/* INTERNET STATUS CHECK */
+const statusBar = document.getElementById("statusBar");
+
+function updateStatus() {
+    if (navigator.onLine) {
+        statusBar.textContent = "✅ System Online";
+        statusBar.style.background = "rgba(0,255,0,0.2)";
+    } else {
+        statusBar.textContent = "⚠️ Offline Mode";
+        statusBar.style.background = "rgba(255,0,0,0.3)";
+    }
+}
+
+window.addEventListener("online", updateStatus);
+window.addEventListener("offline", updateStatus);
+updateStatus();
+</script>
 
 </body>
 </html>

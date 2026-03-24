@@ -1,206 +1,241 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Bus Driver - Live Tracker</title>
+    <title>Driver Live Tracker Pro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            font-family: system-ui;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #1e3a8a, #6d28d9, #0891b2);
+            background-size: 300% 300%;
+            animation: bgMove 10s infinite;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            color: white;
+        }
+
+        @keyframes bgMove {
+            0% { background-position: 0% }
+            50% { background-position: 100% }
+            100% { background-position: 0% }
         }
 
         .card {
-            background: white;
-            color: #333;
             width: 100%;
             max-width: 420px;
-            padding: 30px 25px;
+            padding: 25px;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
             text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
         }
 
         h1 {
-            margin-top: 0;
-            font-size: 1.6rem;
-        }
-
-        p {
-            font-size: 0.95rem;
-            color: #666;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
         }
 
         input {
             width: 100%;
             padding: 14px;
-            font-size: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 12px;
+            border-radius: 10px;
+            border: none;
             margin: 15px 0;
-            outline: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
         }
 
-        input:focus {
-            border-color: #10b981;
+        input::placeholder {
+            color: #dbeafe;
         }
 
         button {
             width: 100%;
-            padding: 16px;
-            background: #ef4444;
-            color: white;
+            padding: 15px;
+            border-radius: 10px;
             border: none;
-            border-radius: 12px;
             font-size: 1rem;
             cursor: pointer;
+            background: linear-gradient(45deg, #ef4444, #f97316);
+            color: white;
             transition: 0.3s;
         }
 
+        button:hover { transform: scale(1.05); }
+
         button.active {
-            background: #10b981;
+            background: linear-gradient(45deg, #22c55e, #06b6d4);
         }
 
-        #status {
-            font-size: 0.95rem;
-            margin: 15px 0;
-            min-height: 24px;
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        #coords {
-            font-size: 0.85rem;
-            color: #666;
-            word-wrap: break-word;
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.4);
+            font-size: 0.9rem;
         }
 
-        /* 📱 Small devices */
-        @media (max-width: 480px) {
-            .card {
-                padding: 20px;
-                border-radius: 15px;
-            }
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: lime;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            animation: blink 1s infinite;
+        }
 
-            h1 {
-                font-size: 1.4rem;
-            }
-
-            button {
-                padding: 14px;
-            }
+        @keyframes blink {
+            0% { opacity: 1 }
+            50% { opacity: 0.3 }
+            100% { opacity: 1 }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="card">
-        <h1>🚌 Bus Driver Tracker</h1>
-        <p>Keep screen ON for live tracking</p>
+<div class="card">
 
-        <input id="busId" placeholder="Enter Bus ID (BUS001)" maxlength="10">
-        <button id="startBtn">Start Tracking</button>
+    <h1>🚌 Driver Tracker Pro</h1>
+    <p>Real-time GPS tracking system</p>
 
-        <div id="status">Ready to track</div>
+    <input id="busId" placeholder="Enter Bus ID (BUS001)">
+    <button id="startBtn" disabled>Start Tracking</button>
+
+    <div class="status-box">
+        <div id="status">Ready</div>
         <div id="coords">Waiting for GPS...</div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBIfqL2iOksHYZlboVQ3q1iU-DO2sTCJrY",
-            authDomain: "whereismybus-ebe42.firebaseapp.com",
-            databaseURL: "https://whereismybus-ebe42-default-rtdb.firebaseio.com",
-            projectId: "whereismybus-ebe42",
-            storageBucket: "whereismybus-ebe42.firebasestorage.app",
-            messagingSenderId: "683775175774",
-            appId: "1:683775175774:web:dc47e18df198232a2058cf",
-            measurementId: "G-SCMYG4ZR4V"
-        };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+/* 🔥 CONFIG */
+const firebaseConfig = {
+        apiKey: "AIzaSyBIfqL2iOksHYZlboVQ3q1iU-DO2sTCJrY",
+        authDomain: "whereismybus-ebe42.firebaseapp.com",
+        databaseURL: "https://whereismybus-ebe42-default-rtdb.firebaseio.com",
+        projectId: "whereismybus-ebe42",
+        storageBucket: "whereismybus-ebe42.firebasestorage.app",
+        messagingSenderId: "683775175774",
+        appId: "1:683775175774:web:dc47e18df198232a2058cf"
+    };
 
-        const busIdInput = document.getElementById("busId");
-        const startBtn = document.getElementById("startBtn");
-        const status = document.getElementById("status");
-        const coords = document.getElementById("coords");
+if (!firebaseConfig.apiKey) {
+    alert("⚠️ Configure Firebase!");
+}
 
-        let watchId = null;
-        let tracking = false;
+/* 🔥 INIT */
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-        startBtn.addEventListener("click", () => {
+/* UI */
+const busIdInput = document.getElementById("busId");
+const startBtn = document.getElementById("startBtn");
+const status = document.getElementById("status");
+const coords = document.getElementById("coords");
 
-            const busId = busIdInput.value.trim().toUpperCase();
+let watchId = null;
+let tracking = false;
 
-            if (!busId) {
-                alert("Please enter Bus ID");
-                return;
+/* ENABLE BUTTON */
+busIdInput.addEventListener("input", () => {
+    startBtn.disabled = !busIdInput.value.trim();
+});
+
+/* TRACK BUTTON */
+startBtn.addEventListener("click", () => {
+
+    const busId = busIdInput.value.trim().toUpperCase();
+
+    if (!navigator.onLine) {
+        status.textContent = "⚠️ No Internet Connection";
+        return;
+    }
+
+    if (!tracking) {
+
+        if (!navigator.geolocation) {
+            status.textContent = "❌ GPS not supported";
+            return;
+        }
+
+        watchId = navigator.geolocation.watchPosition(
+
+            async (pos) => {
+
+                const data = {
+                    latitude: pos.coords.latitude,
+                    longitude: pos.coords.longitude,
+                    speed: pos.coords.speed || 0,
+                    accuracy: pos.coords.accuracy,
+                    timestamp: Date.now()
+                };
+
+                try {
+                    await set(ref(db, "buses/" + busId), data);
+
+                    coords.innerHTML =
+                        `📍 ${data.latitude.toFixed(5)}, ${data.longitude.toFixed(5)}<br>
+                         🚗 Speed: ${data.speed.toFixed(2)} m/s<br>
+                         🎯 Accuracy: ±${data.accuracy} m`;
+
+                    status.innerHTML =
+                        `<span class="live-dot"></span> Live - ${new Date().toLocaleTimeString()}`;
+
+                } catch (err) {
+                    status.textContent = "❌ Firebase Error";
+                }
+            },
+
+            (err) => {
+                status.textContent = "❌ GPS Error: " + err.message;
+            },
+
+            {
+                enableHighAccuracy: true,
+                maximumAge: 0,
+                timeout: 5000
             }
+        );
 
-            if (!tracking) {
+        tracking = true;
+        startBtn.textContent = "Stop Tracking";
+        startBtn.classList.add("active");
 
-                watchId = navigator.geolocation.watchPosition(
-                    async (position) => {
+    } else {
 
-                        const data = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            accuracy: position.coords.accuracy,
-                            timestamp: Date.now()
-                        };
+        navigator.geolocation.clearWatch(watchId);
+        tracking = false;
 
-                        await set(ref(db, "buses/" + busId), data);
+        startBtn.textContent = "Start Tracking";
+        startBtn.classList.remove("active");
 
-                        coords.textContent =
-                            "📍 " +
-                            data.latitude.toFixed(5) +
-                            ", " +
-                            data.longitude.toFixed(5);
+        status.textContent = "⛔ Tracking Stopped";
+    }
+});
 
-                        status.textContent =
-                            "✅ Live - " +
-                            new Date().toLocaleTimeString();
-                    },
-                    (error) => {
-                        status.textContent = "❌ GPS Error: " + error.message;
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        maximumAge: 5000,
-                        timeout: 10000
-                    }
-                );
-
-                tracking = true;
-                startBtn.textContent = "Stop Tracking";
-                startBtn.classList.add("active");
-
-            } else {
-
-                navigator.geolocation.clearWatch(watchId);
-                tracking = false;
-
-                startBtn.textContent = "Start Tracking";
-                startBtn.classList.remove("active");
-                status.textContent = "⛔ Tracking Stopped";
-            }
-        });
-    </script>
+/* AUTO STOP ON CLOSE */
+window.addEventListener("beforeunload", () => {
+    if (watchId) navigator.geolocation.clearWatch(watchId);
+});
+</script>
 
 </body>
-
 </html>
