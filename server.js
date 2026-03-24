@@ -65,21 +65,21 @@ const port = 3000;
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files
-app.use(express.static(__dirname));
+app.use(express.static(__dirname,'Public'));
 
 // Home (Index)
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'Public', 'index.html'));
 });
 
 // Frontpage
 app.get('/frontpage', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontpage.html'));
+    res.sendFile(path.join(__dirname,'Public', 'frontpage.html'));
 });
 
 // Driver Page
 app.get('/driver', (req, res) => {
-    res.sendFile(path.join(__dirname, 'driver.html'));
+    res.sendFile(path.join(__dirname,'Public', 'driver.html'));
 });
 
 // Handle Track Form
@@ -95,7 +95,7 @@ app.post('/track', (req, res) => {
 
 // Routemap
 app.get('/routemap', (req, res) => {
-    res.sendFile(path.join(__dirname, 'routemap.html'));
+    res.sendFile(path.join(__dirname,'Public', 'routemap.html'));
 });
 
 // 404
